@@ -1,0 +1,6 @@
+Revision history for Perl extension CSS::Director.
+
+0.01  Tue Jan 29 20:48:08 2013
+	- original version; created by h2xs 1.23 with options
+		-AXn CSS::Director
+

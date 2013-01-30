@@ -8,22 +8,10 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
-    FixBodyDirectionLtrAndRtl
-    FixLeftAndRight
-    FixLeftAndRightInUrl
-    FixLtrAndRtlInUrl
-    FixCursorProperties
-    FixBorderRadius
-    FixBackgroundPosition
-    FixFourPartNotation
     ChangeLeftToRightToLeft
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-    
-);
 
 our $VERSION = '0.01';
 
@@ -549,6 +537,11 @@ sub ChangeLeftToRightToLeft {
     return ref( $lines ) ? \@lines : $lines[0];
 }
 
+sub change {
+    shift;
+    ChangeLeftToRightToLeft( @_ );
+}
+
 1;
 
 package CSS::Orientation::Tokenizer;
@@ -605,21 +598,29 @@ CSS::Orientation - Perl extension to change orientation in CSS
 
 =head1 SYNOPSIS
 
-  use CSS::Orientation;
-  blah blah blah
+  use CSS::Orientation qw( ChangeLeftToRightToLeft );
+  ...
+  $rtlcss = ChangeLeftToRightToLeft( $css );
+  # or without importing anything
+  $rtlcss = CSS::Orientation->change( $css );
 
 =head1 DESCRIPTION
 
-Stub documentation for CSS::Orientation, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
+This module is a port of google's cssjanus to Perl.
 
 =head2 EXPORT
 
-None by default.
+Nothing by default.
 
+=head3 ChangeLeftToRightToLeft( \@lines | $line [ swap_ltr_rtl_in_url swap_left_right_in_url ] )
+
+=head2 METHODS
+
+To use it without import or after require:
+
+=head3 change( \@lines | $line [ swap_ltr_rtl_in_url swap_left_right_in_url ] )
+
+=back
 
 =head1 SEE ALSO
 
@@ -627,11 +628,11 @@ L<http://code.google.com/p/cssjanus/>
 
 =head1 AUTHOR
 
-A. U. Thor, E<lt>simon@E<gt>
+Simon Bertrang, E<lt>janus@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2013 by A. U. Thor
+Copyright (C) 2013 by Simon Bertrang
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.12.2 or,

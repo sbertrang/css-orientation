@@ -297,18 +297,13 @@ sub ReorderBorderRadiusPart {
     }
 }
 
-use Data::Dumper;
-
 sub ReorderBorderRadius {
     my @m = @_;
 
-    warn( Dumper( { reorder => \@m } ) );
-
-    my $first_group = ReorderBorderRadiusPart( @m[ 1 .. 5 ] );
-    my $second_group = ReorderBorderRadiusPart( @m[ 5 .. $#m ] );
+    my $first_group = ReorderBorderRadiusPart( @m[ 2 .. 5 ] );
+    my $second_group = ReorderBorderRadiusPart( @m[ 6 .. $#m ] );
 
     if ( $second_group eq '' ) {
-warn("second empty: " . Dumper( \@m ) );
         return sprintf( '%sborder-radius%s%s', $m[0], $m[1], $first_group );
     }
     else {
@@ -320,16 +315,7 @@ warn("second empty: " . Dumper( \@m ) );
 sub FixBorderRadius {
     my ( $line ) = @_;
 
-use Data::Dumper;
-#warn( Dumper( \@-, \@+ ) );
-warn( "<$line> =~ <$BORDER_RADIUS_RE>" );
-
-    #$line =~ s!$BORDER_RADIUS_RE!warn( Dumper( scalar( @- ), scalar( @+ ) ) )!egms;
-    $line =~ s!$BORDER_RADIUS_RE!
-        warn(Dumper({inre => \@-, refs => [ '', $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 ] }));
-        ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-    !egms;
-    #$line =~ s!$BORDER_RADIUS_RE! my @m = map +( substr( $line, $-[$_], $+[$_] - $-[$_] ) ), 1 .. $#-; warn Dumper { m => \@m } !egms;
+    $line =~ s!$BORDER_RADIUS_RE!ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)!egms;
 
     return $line;
 }

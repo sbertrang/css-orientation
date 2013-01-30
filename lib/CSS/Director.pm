@@ -325,11 +325,11 @@ sub FixCursorProperties {
 sub FixBackgroundPosition {
     my $line = shift;
 
-    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition($0,$1,$2,$3,$4,$5,$6)!egms;
-    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX($0,$1,$2)!egms;
+    $line =~ s!($BG_HORIZONTAL_PERCENTAGE_RE)!CalculateNewBackgroundPosition($1,$2,$3,$4,$5,$6,$7)!egms;
+    $line =~ s!($BG_HORIZONTAL_PERCENTAGE_X_RE)!CalculateNewBackgroundPositionX($1,$2,$3)!egms;
 
-    $line =~ s!$BG_HORIZONTAL_LENGTH_RE!CalculateNewBackgroundLengthPosition($0,$1,$2,$3,$4,$5,$6)!egms;
-    $line =~ s!$BG_HORIZONTAL_LENGTH_X_RE!CalculateNewBackgroundLengthPositionX($0,$1,$2)!egms;
+    $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!CalculateNewBackgroundLengthPosition($1,$2,$3,$4,$5,$6,$7)!egms;
+    $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!CalculateNewBackgroundLengthPositionX($1,$2,$3)!egms;
 
     return $line;
 }
@@ -357,14 +357,14 @@ sub ReorderBorderRadiusPart {
 sub ReorderBorderRadius {
     my @m = @_;
 
-    my $first_group = ReorderBorderRadiusPart( @m[ 2 .. 5 ] );
-    my $second_group = ReorderBorderRadiusPart( @m[ 6 .. $#m ] );
+    my $first_group = ReorderBorderRadiusPart( @m[ 3 .. 6 ] );
+    my $second_group = ReorderBorderRadiusPart( @m[ 7 .. $#m ] );
 
     if ( $second_group eq '' ) {
-        return sprintf( '%sborder-radius%s%s', $m[0], $m[1], $first_group );
+        return sprintf( '%sborder-radius%s%s', $m[1], $m[2], $first_group );
     }
     else {
-        return sprintf( '%sborder-radius%s%s / %s', $m[0], $m[1], $first_group, $second_group );
+        return sprintf( '%sborder-radius%s%s / %s', $m[1], $m[2], $first_group, $second_group );
     }
 }
 
@@ -413,7 +413,7 @@ sub CalculateNewBackgroundLengthPositionX {
 sub FixBorderRadius {
     my ( $line ) = @_;
 
-    $line =~ s!$BORDER_RADIUS_RE!ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)!egms;
+    $line =~ s!($BORDER_RADIUS_RE)!ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)!egms;
 
     return $line;
 }

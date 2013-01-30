@@ -144,15 +144,15 @@ is( ChangeLeftToRightToLeft( "background: url(/foo/bar-right.png); direction: lt
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl_right.png);left:10px; direction: ltr" ), "background: url(/foo/bar-rtl_right.png);right:10px; direction: ltr" );
 
 diag( "testUrlWithFlagOn" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar-left.png)" ), "background: url(/foo/bar-right.png)" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/left-bar.png)" ), "background: url(/foo/right-bar.png)" );
-is( ChangeLeftToRightToLeft( "url(\"http://www.blogger.com/img/triangle_ltr.gif\")" ), "url(\"http://www.blogger.com/img/triangle_rtl.gif\")" );
-is( ChangeLeftToRightToLeft( "url('http://www.blogger.com/img/triangle_ltr.gif')" ), "url('http://www.blogger.com/img/triangle_rtl.gif')" );
-is( ChangeLeftToRightToLeft( "url('http://www.blogger.com/img/triangle_ltr.gif'  )" ), "url('http://www.blogger.com/img/triangle_rtl.gif'  )" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar.left.png)" ), "background: url(/foo/bar.right.png)" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bright.png)" ), "background: url(/foo/bright.png)" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl.png)" ), "background: url(/foo/bar-ltr.png)" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl.png); left: 10px" ), "background: url(/foo/bar-ltr.png); right: 10px" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar-right.png); direction: ltr" ), "background: url(/foo/bar-left.png); direction: ltr" );
-is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl_right.png);left:10px; direction: ltr" ), "background: url(/foo/bar-ltr_left.png);right:10px; direction: ltr" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar-left.png)", 1, 1 ), "background: url(/foo/bar-right.png)" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/left-bar.png)", 1, 1 ), "background: url(/foo/right-bar.png)" );
+is( ChangeLeftToRightToLeft( "url(\"http://www.blogger.com/img/triangle_ltr.gif\")", 1, 1 ), "url(\"http://www.blogger.com/img/triangle_rtl.gif\")" );
+is( ChangeLeftToRightToLeft( "url('http://www.blogger.com/img/triangle_ltr.gif')", 1, 1 ), "url('http://www.blogger.com/img/triangle_rtl.gif')" );
+is( ChangeLeftToRightToLeft( "url('http://www.blogger.com/img/triangle_ltr.gif'  )", 1, 1 ), "url('http://www.blogger.com/img/triangle_rtl.gif'  )" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar.left.png)", 1, 1 ), "background: url(/foo/bar.right.png)" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bright.png)", 1, 1 ), "background: url(/foo/bright.png)" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl.png)", 1, 1 ), "background: url(/foo/bar-ltr.png)" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl.png); left: 10px", 1, 1 ), "background: url(/foo/bar-ltr.png); right: 10px" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar-right.png); direction: ltr", 1, 1 ), "background: url(/foo/bar-left.png); direction: ltr" );
+is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl_right.png);left:10px; direction: ltr", 1, 1 ), "background: url(/foo/bar-ltr_left.png);right:10px; direction: ltr" );
 

@@ -578,7 +578,7 @@ sub detokenize {
     my ( $self, $line ) = @_;
 
     $line =~ s!$CSS::Director::TOKEN_DELIMITER$self->{string}_([0-9]+)$CSS::Director::TOKEN_DELIMITER!
-        $1 < @{ $self->{originals} } ? $self->{originals}[$1] : ''
+        $1 <= @{ $self->{originals} } ? $self->{originals}[$1-1] : ''
     !eg;
 
 =tmp

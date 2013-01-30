@@ -15,6 +15,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
     FixCursorProperties
     FixBorderRadius
     FixBackgroundPosition
+    FixFourPartNotation
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -45,6 +46,12 @@ our $NMCHAR = q'(?:[_a-z0-9-]|' . $NON_ASCII . q'|' . $ESCAPE . q')';
 
 # ident                   -?{nmstart}{nmchar}*
 our $IDENT = q'-?' . $NMSTART . $NMCHAR . '*';
+
+# name                    {nmchar}+
+our $NAME = $NMCHAR . q'+';
+
+# hash
+our $HASH = q'#' . $NAME;
 
 # num                     [0-9]+|[0-9]*"."[0-9]+
 our $NUM = q'(?:[0-9]*\.[0-9]+|[0-9]+)';
@@ -131,6 +138,21 @@ our $POSSIBLY_NEGATIVE_QUANTITY = sprintf( q'((?:-?%s)|(?:inherit|auto))', $QUAN
 our $POSSIBLY_NEGATIVE_QUANTITY_SPACE = sprintf( q'%s%s%s', $POSSIBLY_NEGATIVE_QUANTITY,
                                                 $SPACE,
                                                 $WHITESPACE );
+
+our $FOUR_NOTATION_QUANTITY_RE = risprintf( q'%s%s%s%s',
+                                       $POSSIBLY_NEGATIVE_QUANTITY_SPACE,
+                                       $POSSIBLY_NEGATIVE_QUANTITY_SPACE,
+                                       $POSSIBLY_NEGATIVE_QUANTITY_SPACE,
+                                       $POSSIBLY_NEGATIVE_QUANTITY );
+our $COLOR = sprintf( q'(%s|%s)', $NAME, $HASH );
+our $COLOR_SPACE = sprintf( q'%s%s', $COLOR, $SPACE );
+our $FOUR_NOTATION_COLOR_RE = risprintf( q'(-color%s:%s)%s%s%s(%s)',
+                                    $WHITESPACE,
+                                    $WHITESPACE,
+                                    $COLOR_SPACE,
+                                    $COLOR_SPACE,
+                                    $COLOR_SPACE,
+                                    $COLOR );
 
 # border-radius is very different from usual 4 part notation: ABCD should
 # change to BADC (while it would be ADCB in normal 4 part notation), ABC
@@ -414,6 +436,15 @@ sub FixBorderRadius {
     my ( $line ) = @_;
 
     $line =~ s!($BORDER_RADIUS_RE)!ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)!egms;
+
+    return $line;
+}
+
+sub FixFourPartNotation {
+    my $line = shift;
+
+    $line =~ s!$FOUR_NOTATION_QUANTITY_RE!$1 $4 $3 $2!g;
+    $line =~ s!$FOUR_NOTATION_COLOR_RE!$1$2 $5 $4 $3!g;
 
     return $line;
 }

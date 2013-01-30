@@ -6,7 +6,7 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Director qw( FixBodyDirectionLtrAndRtl );
+use CSS::Orientation qw( FixBodyDirectionLtrAndRtl );
 
 my $input = 'body { direction:ltr }';
 my $output = 'body { direction:rtl }';

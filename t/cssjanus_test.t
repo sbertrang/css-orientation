@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use CSS::Director qw( ChangeLeftToRightToLeft );
+use CSS::Orientation qw( ChangeLeftToRightToLeft );
 
 use Test::More
     tests => 102

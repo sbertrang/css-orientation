@@ -6,7 +6,7 @@ use Test::More
     tests => 8
 ;
 
-use CSS::Director qw( FixBackgroundPosition );
+use CSS::Orientation qw( FixBackgroundPosition );
 
 is( FixBackgroundPosition( "background-position: 0px 10px" ), "background-position: 100% 10px" );
 is( FixBackgroundPosition( "background-position-x: 0" ), "background-position-x: 100%" );

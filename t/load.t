@@ -6,5 +6,5 @@ use Test::More
     tests => 1
 ;
 
-use_ok( 'CSS::Director' );
+use_ok( 'CSS::Orientation' );
 

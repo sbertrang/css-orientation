@@ -6,7 +6,7 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Director qw( FixLeftAndRightInUrl );
+use CSS::Orientation qw( FixLeftAndRightInUrl );
 
 my $input = 'background:url(right.png)';
 my $output = 'background:url(left.png)';

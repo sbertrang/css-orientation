@@ -6,7 +6,7 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Director qw( FixLtrAndRtlInUrl );
+use CSS::Orientation qw( FixLtrAndRtlInUrl );
 
 my $input = 'background:url(rtl.png)';
 my $output = 'background:url(ltr.png)';

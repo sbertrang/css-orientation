@@ -6,7 +6,7 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Director qw( FixCursorProperties );
+use CSS::Orientation qw( FixCursorProperties );
 
 my $input = 'cursor: ne-resize';
 my $output = 'cursor: nw-resize';

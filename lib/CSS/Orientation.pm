@@ -1,4 +1,4 @@
-package CSS::Director;
+package CSS::Orientation;
 
 use strict;
 use warnings;
@@ -325,9 +325,9 @@ our $BORDER_RADIUS_TOKENIZER_RE = risprintf( q'((?:%s)?border-radius%s:[^;}]+;?)
                                                                                 $WHITESPACE );
 
 our $GRADIENT_RE = qr/ (
-	$CSS::Director::IDENT
+	$CSS::Orientation::IDENT
 	[\.-] gradient
-	$CSS::Director::WHITESPACE
+	$CSS::Orientation::WHITESPACE
 	\( (?: (?>[^()]+) | \([^()]*\) )+ \)
 ) /ix;
 
@@ -494,19 +494,19 @@ sub ChangeLeftToRightToLeft {
     my $line = join( $TOKEN_LINES, ref( $lines ) ? @$lines : $lines );
 
     # Tokenize any single line rules with the /* noflip */ annotation.
-    my $noflip_single_tokenizer = CSS::Director::Tokenizer->new( $NOFLIP_SINGLE_RE, 'NOFLIP_SINGLE' );
+    my $noflip_single_tokenizer = CSS::Orientation::Tokenizer->new( $NOFLIP_SINGLE_RE, 'NOFLIP_SINGLE' );
     $line = $noflip_single_tokenizer->tokenize( $line );
 
     # Tokenize any class rules with the /* noflip */ annotation.
-    my $noflip_class_tokenizer = CSS::Director::Tokenizer->new( $NOFLIP_CLASS_RE, 'NOFLIP_CLASS' );
+    my $noflip_class_tokenizer = CSS::Orientation::Tokenizer->new( $NOFLIP_CLASS_RE, 'NOFLIP_CLASS' );
     $line = $noflip_class_tokenizer->tokenize( $line );
 
     # Tokenize the comments so we can preserve them through the changes.
-    my $comment_tokenizer = CSS::Director::Tokenizer->new( $COMMENT_RE, 'C' );
+    my $comment_tokenizer = CSS::Orientation::Tokenizer->new( $COMMENT_RE, 'C' );
     $line = $comment_tokenizer->tokenize( $line );
 
     # Tokenize gradients since we don't want to mirror the values inside
-    my $gradient_tokenizer = CSS::Director::Tokenizer->new( $GRADIENT_RE, 'GRADIENT' );
+    my $gradient_tokenizer = CSS::Orientation::Tokenizer->new( $GRADIENT_RE, 'GRADIENT' );
     $line = $gradient_tokenizer->tokenize( $line );
 
     # Here starteth the various left/right orientation fixes.
@@ -525,7 +525,7 @@ sub ChangeLeftToRightToLeft {
 
     $line = FixBorderRadius( $line );
     # Since FourPartNotation conflicts with BorderRadius, we tokenize border-radius properties here.
-    my $border_radius_tokenizer = CSS::Director::Tokenizer->new( $BORDER_RADIUS_TOKENIZER_RE, 'BORDER_RADIUS' );
+    my $border_radius_tokenizer = CSS::Orientation::Tokenizer->new( $BORDER_RADIUS_TOKENIZER_RE, 'BORDER_RADIUS' );
     $line = $border_radius_tokenizer->tokenize( $line );
     $line = FixFourPartNotation( $line );
     $line = $border_radius_tokenizer->detokenize( $line );
@@ -551,7 +551,7 @@ sub ChangeLeftToRightToLeft {
 
 1;
 
-package CSS::Director::Tokenizer;
+package CSS::Orientation::Tokenizer;
 
 use strict;
 use warnings;
@@ -571,10 +571,10 @@ sub tokenize {
     my ( $self, $line ) = @_;
 
     $line =~ s!$self->{re}!
-        $CSS::Director::TOKEN_DELIMITER .
+        $CSS::Orientation::TOKEN_DELIMITER .
         $self->{string} . '_' .
         push( @{ $self->{originals} }, $1 ) .
-        $CSS::Director::TOKEN_DELIMITER
+        $CSS::Orientation::TOKEN_DELIMITER
     !egx;
 
     return $line;
@@ -584,10 +584,10 @@ sub detokenize {
     my ( $self, $line ) = @_;
 
     $line =~ s!
-        $CSS::Director::TOKEN_DELIMITER
+        $CSS::Orientation::TOKEN_DELIMITER
         $self->{string} _
         ([0-9]+)
-        $CSS::Director::TOKEN_DELIMITER
+        $CSS::Orientation::TOKEN_DELIMITER
     !
         $1 <= @{ $self->{originals} } ? $self->{originals}[$1-1] : ''
     !egx;
@@ -601,16 +601,16 @@ __END__
 
 =head1 NAME
 
-CSS::Director - Perl extension to change orientation in CSS
+CSS::Orientation - Perl extension to change orientation in CSS
 
 =head1 SYNOPSIS
 
-  use CSS::Director;
+  use CSS::Orientation;
   blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for CSS::Director, created by h2xs. It looks like the
+Stub documentation for CSS::Orientation, created by h2xs. It looks like the
 author of the extension was negligent enough to leave the stub
 unedited.
 

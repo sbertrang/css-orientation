@@ -325,8 +325,8 @@ sub FixCursorProperties {
 sub FixBackgroundPosition {
     my $line = shift;
 
-    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition($1,$2,$3,$4,$5,$6)!egms;
-    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX($1,$2)!egms;
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition($0,$1,$2,$3,$4,$5,$6)!egms;
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX($0,$1,$2)!egms;
 
     $line =~ s!$BG_HORIZONTAL_LENGTH_RE!CalculateNewBackgroundLengthPosition($0,$1,$2,$3,$4,$5,$6)!egms;
     $line =~ s!$BG_HORIZONTAL_LENGTH_X_RE!CalculateNewBackgroundLengthPositionX($0,$1,$2)!egms;
@@ -371,18 +371,18 @@ sub ReorderBorderRadius {
 sub CalculateNewBackgroundPosition {
     my @m = @_;
 
-    my $new_x = 100 - $m[3];
-    my $position_string = defined( $m[0] ) ? $m[0] : '';
+    my $new_x = 100 - $m[4];
+    my $position_string = defined( $m[1] ) ? $m[1] : '';
 
-    return sprintf( 'background%s%s%s%s%%%s', $position_string, $m[1], $m[2], $new_x, $m[4] );
+    return sprintf( 'background%s%s%s%s%%%s', $position_string, $m[2], $m[3], $new_x, $m[5] );
 }
 
 sub CalculateNewBackgroundPositionX {
     my @m = @_;
 
-    my $new_x = 100 - $m[1];
+    my $new_x = 100 - $m[2];
 
-    return sprintf( 'background-position-x%s%s%%', $m[0], $new_x );
+    return sprintf( 'background-position-x%s%s%%', $m[1], $new_x );
 }
 
 sub CalculateNewBackgroundLengthPosition {

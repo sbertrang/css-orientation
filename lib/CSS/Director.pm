@@ -621,21 +621,6 @@ Blah blah blah.
 None by default.
 
 
-=head1 HISTORY
-
-=over 8
-
-=item 0.01
-
-Original version; created by h2xs 1.23 with options
-
-  -AXCn
-    CSS::Director
-
-=back
-
-
-
 =head1 SEE ALSO
 
 Mention other useful documentation such as the documentation of

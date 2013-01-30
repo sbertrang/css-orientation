@@ -324,6 +324,12 @@ our $NOFLIP_CLASS_RE = risprintf( q'(%s%s})', $NOFLIP_ANNOTATION,
 our $BORDER_RADIUS_TOKENIZER_RE = risprintf( q'((?:%s)?border-radius%s:[^;}]+;?)', $IDENT,
                                                                                 $WHITESPACE );
 
+our $GRADIENT_RE = qr/ (
+	$CSS::Director::IDENT
+	[\.-] gradient
+	$CSS::Director::WHITESPACE
+	\( ( (?>[^()]+) | \([^()]*\) )+ \)
+) /ix;
 
 sub FixBodyDirectionLtrAndRtl {
     my ( $line ) = @_;
@@ -500,8 +506,8 @@ sub ChangeLeftToRightToLeft {
     $line = $comment_tokenizer->tokenize( $line );
 
     # Tokenize gradients since we don't want to mirror the values inside
-    #my $gradient_tokenizer = CSS::Director::Tokenizer->new( GradientMatcher(), 'GRADIENT' );
-    #$line = $gradient_tokenizer->tokenize( $line );
+    my $gradient_tokenizer = CSS::Director::Tokenizer->new( $GRADIENT_RE, 'GRADIENT' );
+    $line = $gradient_tokenizer->tokenize( $line );
 
     # Here starteth the various left/right orientation fixes.
     $line = FixBodyDirectionLtrAndRtl( $line );
@@ -526,7 +532,7 @@ sub ChangeLeftToRightToLeft {
 
     $line = FixBackgroundPosition( $line );
 
-    #$line = $gradient_tokenizer->detokenize( $line );
+    $line = $gradient_tokenizer->detokenize( $line );
 
     # DeTokenize the single line noflips.
     $line = $noflip_single_tokenizer->detokenize( $line );

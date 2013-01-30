@@ -581,18 +581,6 @@ sub detokenize {
         $1 <= @{ $self->{originals} } ? $self->{originals}[$1-1] : ''
     !eg;
 
-=tmp
-    for my $i ( 0 .. $#{ $self->{originals} } ) {
-        my $token =
-            $CSS::Director::TOKEN_DELIMITER .
-            $self->{string} . '_' .
-            ( $i + 1 ) .
-            $CSS::Director::TOKEN_DELIMITER
-        ;
-        $line =~ s!$token!$originals->[$i]!g;
-    }
-=cut
-
     return $line;
 }
 

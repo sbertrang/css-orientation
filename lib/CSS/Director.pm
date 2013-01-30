@@ -14,6 +14,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
     FixLtrAndRtlInUrl
     FixCursorProperties
     FixBorderRadius
+    FixBackgroundPosition
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -156,11 +157,55 @@ our $BORDER_RADIUS_RE = risprintf( q'((?:%s)?)border-radius(%s:%s)' .
 our $CURSOR_EAST_RE = resprintf( $LOOKBEHIND_NOT_LETTER . '([ns]?)e-resize' );
 our $CURSOR_WEST_RE = resprintf( $LOOKBEHIND_NOT_LETTER . '([ns]?)w-resize' );
 
+# Matches the condition where we need to replace the horizontal component
+# of a background-position value when expressed in horizontal percentage.
+# Had to make two regexes because in the case of position-x there is only
+# one quantity, and otherwise we don't want to match and change cases with only
+# one quantity.
+our $BG_HORIZONTAL_PERCENTAGE_RE = resprintf( q'background(-position)?(%s:%s)' .
+                                         q'([^%%]*?)(%s)%%' .
+                                         q'(%s(?:%s|top|center|bottom))', $WHITESPACE,
+                                                                           $WHITESPACE,
+                                                                           $NUM,
+                                                                           $WHITESPACE,
+                                                                           $POSSIBLY_NEGATIVE_QUANTITY );
 
+our $BG_HORIZONTAL_PERCENTAGE_X_RE = resprintf( q'background-position-x(%s:%s)' .
+                                           q'(%s)%%', $WHITESPACE,
+                                                       $WHITESPACE,
+                                                       $NUM );
+# Non-percentage units used for CSS lengths
+our $LENGTH_UNIT = q'(?:em|ex|px|cm|mm|in|pt|pc)';
+# To make sure the lone 0 is not just starting a number (like "02") or a percentage like ("0 %")
+our $LOOKAHEAD_END_OF_ZERO = sprintf( '(?![0-9]|%s%%)', $WHITESPACE );
+# A length with a unit specified. Matches "0" too, as it's a length, not a percentage.
+our $LENGTH = sprintf( '(?:-?%s(?:%s%s)|0+%s)', $NUM,
+                                    $WHITESPACE,
+                                    $LENGTH_UNIT,
+                                    $LOOKAHEAD_END_OF_ZERO );
 
+# Zero length. Used in the replacement functions.
+our $ZERO_LENGTH = resprintf( q'(?:-?0+(?:%s%s)|0+%s)$', $WHITESPACE,
+                                                      $LENGTH_UNIT,
+                                                      $LOOKAHEAD_END_OF_ZERO );
 
+# Matches background, background-position, and background-position-x
+# properties when using a CSS length for its horizontal positioning.
+our $BG_HORIZONTAL_LENGTH_RE = resprintf( q'background(-position)?(%s:%s)' .
+                                      q'((?:.+?%s+)??)(%s)' .
+                                      q'((?:%s+)(?:%s|top|center|bottom))', $WHITESPACE,
+                                                                            $WHITESPACE,
+                                                                            $SPACE,
+                                                                            $LENGTH,
+                                                                            $SPACE,
+                                                                            $POSSIBLY_NEGATIVE_QUANTITY );
 
+our $BG_HORIZONTAL_LENGTH_X_RE = resprintf( q'background-position-x(%s:%s)' .
+                                        q'(%s)', $WHITESPACE,
+                                                  $WHITESPACE,
+                                                  $LENGTH );
 
+# Matches the opening of a body selector.
 our $BODY_SELECTOR = sprintf( q'body%s{%s', $WHITESPACE, $WHITESPACE );
 
 # Matches anything up until the closing of a selector.
@@ -277,6 +322,18 @@ sub FixCursorProperties {
     return $line;
 }
 
+sub FixBackgroundPosition {
+    my $line = shift;
+
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition($1,$2,$3,$4,$5,$6)!egms;
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX($1,$2)!egms;
+
+    $line =~ s!$BG_HORIZONTAL_LENGTH_RE!CalculateNewBackgroundLengthPosition($0,$1,$2,$3,$4,$5,$6)!egms;
+    $line =~ s!$BG_HORIZONTAL_LENGTH_X_RE!CalculateNewBackgroundLengthPositionX($0,$1,$2)!egms;
+
+    return $line;
+}
+
 sub ReorderBorderRadiusPart {
     my @part = grep defined, @_;
 
@@ -311,6 +368,47 @@ sub ReorderBorderRadius {
     }
 }
 
+sub CalculateNewBackgroundPosition {
+    my @m = @_;
+
+    my $new_x = 100 - $m[3];
+    my $position_string = defined( $m[0] ) ? $m[0] : '';
+
+    return sprintf( 'background%s%s%s%s%%%s', $position_string, $m[1], $m[2], $new_x, $m[4] );
+}
+
+sub CalculateNewBackgroundPositionX {
+    my @m = @_;
+
+    my $new_x = 100 - $m[1];
+
+    return sprintf( 'background-position-x%s%s%%', $m[0], $new_x );
+}
+
+sub CalculateNewBackgroundLengthPosition {
+    my @m = @_;
+
+    unless ( $m[4] =~ $ZERO_LENGTH ) {
+        warn( "Unmirrorable horizontal value $m[4]: $m[0]" );
+        return $m[0];
+    }
+
+    my $position_string = defined( $m[1] ) ? $m[1] : '';
+
+    return sprintf( 'background%s%s%s100%%%s', $position_string, $m[2], $m[3], $m[5] );
+
+}
+
+sub CalculateNewBackgroundLengthPositionX {
+    my @m = @_;
+
+    unless ( $m[2] =~ $ZERO_LENGTH ) {
+        warn( "Unmirrorable horizontal value $m[2]: $m[0]" );
+        return $m[0];
+    }
+
+    return sprintf( 'background-position-x%s100%%', $m[1] );
+}
 
 sub FixBorderRadius {
     my ( $line ) = @_;

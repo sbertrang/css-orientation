@@ -1,6 +1,13 @@
 Changes
+lib/CSS/Director.pm
 Makefile.PL
 MANIFEST
 README
+t/FixBodyDirectionLtrAndRtl.t
+t/FixBorderRadius.t
+t/FixCursorProperties.t
+t/FixLeftAndRight.t
+t/FixLeftAndRightInUrl.t
+t/FixLtrAndRtlInUrl.t
 t/load.t
-lib/CSS/Director.pm
+t/ReorderBorderRadiusPart.t

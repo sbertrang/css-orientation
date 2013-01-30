@@ -347,8 +347,9 @@ sub FixCursorProperties {
 sub FixBackgroundPosition {
     my $line = shift;
 
-    $line =~ s!($BG_HORIZONTAL_PERCENTAGE_RE)!CalculateNewBackgroundPosition($1,$2,$3,$4,$5,$6,$7)!egms;
-    $line =~ s!($BG_HORIZONTAL_PERCENTAGE_X_RE)!CalculateNewBackgroundPositionX($1,$2,$3)!egms;
+    # leave full match undef where not needed
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition(undef,$1,$2,$3,$4,$5,$6)!egms;
+    $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX(undef,$1,$2)!egms;
 
     $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!CalculateNewBackgroundLengthPosition($1,$2,$3,$4,$5,$6,$7)!egms;
     $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!CalculateNewBackgroundLengthPositionX($1,$2,$3)!egms;
@@ -435,7 +436,8 @@ sub CalculateNewBackgroundLengthPositionX {
 sub FixBorderRadius {
     my ( $line ) = @_;
 
-    $line =~ s!($BORDER_RADIUS_RE)!ReorderBorderRadius($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)!egms;
+    # full match not needed, leave undef
+    $line =~ s!$BORDER_RADIUS_RE!ReorderBorderRadius(undef,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10)!egms;
 
     return $line;
 }

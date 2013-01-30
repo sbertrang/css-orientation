@@ -16,6 +16,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
     FixBorderRadius
     FixBackgroundPosition
     FixFourPartNotation
+    ChangeLeftToRightToLeft
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -67,6 +68,10 @@ our $URL_SPECIAL_CHARS = q'[!#$%&*-~]';
 
 # url chars               ({url_special_chars}|{nonascii}|{escape})*
 our $URL_CHARS = sprintf( q'(?:%s|%s|%s)*', $URL_SPECIAL_CHARS, $NON_ASCII, $ESCAPE );
+
+# comments
+# see http://www.w3.org/TR/CSS21/grammar.html
+our $COMMENT = q'/\*[^*]*\*+([^/*][^*]*\*+)*/';
 
 # {E}{M}             {return EMS;}
 # {E}{X}             {return EXS;}
@@ -292,6 +297,32 @@ our $RTL_IN_URL_RE = risprintf( '%s(%s)%s', $LOOKBEHIND_NOT_LETTER,
                                          $RTL,
                                          $LOOKAHEAD_FOR_CLOSING_PAREN );
 
+our $COMMENT_RE = risprintf( '(%s)', $COMMENT );
+
+our $NOFLIP_TOKEN = q'\@noflip';
+# The NOFLIP_TOKEN inside of a comment. For now, this requires that comments
+# be in the input, which means users of a css compiler would have to run
+# this script first if they want this functionality.
+our $NOFLIP_ANNOTATION = resprintf( q'/\*%s%s%s\*/', $WHITESPACE,
+                                       $NOFLIP_TOKEN,
+                                       $WHITESPACE );
+
+# After a NOFLIP_ANNOTATION, and within a class selector, we want to be able
+# to set aside a single rule not to be flipped. We can do this by matching
+# our NOFLIP annotation and then using a lookahead to make sure there is not
+# an opening brace before the match.
+our $NOFLIP_SINGLE_RE = risprintf( q'(%s%s[^;}]+;?)', $NOFLIP_ANNOTATION,
+                                                   $LOOKAHEAD_NOT_OPEN_BRACE );
+
+# After a NOFLIP_ANNOTATION, we want to grab anything up until the next } which
+# means the entire following class block. This will prevent all of its
+# declarations from being flipped.
+our $NOFLIP_CLASS_RE = risprintf( q'(%s%s})', $NOFLIP_ANNOTATION,
+                                           $CHARS_WITHIN_SELECTOR );
+
+# border-radis properties and their values
+our $BORDER_RADIUS_TOKENIZER_RE = risprintf( q'((?:%s)?border-radius%s:[^;}]+;?)', $IDENT,
+                                                                                $WHITESPACE );
 
 
 sub FixBodyDirectionLtrAndRtl {
@@ -447,6 +478,120 @@ sub FixFourPartNotation {
 
     $line =~ s!$FOUR_NOTATION_QUANTITY_RE!$1 $4 $3 $2!g;
     $line =~ s!$FOUR_NOTATION_COLOR_RE!$1$2 $5 $4 $3!g;
+
+    return $line;
+}
+
+sub ChangeLeftToRightToLeft {
+    my ( $lines, $swap_ltr_rtl_in_url, $swap_left_right_in_url ) = @_;
+
+    my $line = join( $TOKEN_LINES, ref( $lines ) ? @$lines : $lines );
+
+    # Tokenize any single line rules with the /* noflip */ annotation.
+    my $noflip_single_tokenizer = CSS::Director::Tokenizer->new( $NOFLIP_SINGLE_RE, 'NOFLIP_SINGLE' );
+    $line = $noflip_single_tokenizer->tokenize( $line );
+
+    # Tokenize any class rules with the /* noflip */ annotation.
+    my $noflip_class_tokenizer = CSS::Director::Tokenizer->new( $NOFLIP_CLASS_RE, 'NOFLIP_CLASS' );
+    $line = $noflip_class_tokenizer->tokenize( $line );
+
+    # Tokenize the comments so we can preserve them through the changes.
+    my $comment_tokenizer = CSS::Director::Tokenizer->new( $COMMENT_RE, 'C' );
+    $line = $comment_tokenizer->tokenize( $line );
+
+    # Tokenize gradients since we don't want to mirror the values inside
+    #my $gradient_tokenizer = CSS::Director::Tokenizer->new( GradientMatcher(), 'GRADIENT' );
+    #$line = $gradient_tokenizer->tokenize( $line );
+
+    # Here starteth the various left/right orientation fixes.
+    $line = FixBodyDirectionLtrAndRtl( $line );
+
+    if ( $swap_left_right_in_url ) {
+        $line = FixLeftAndRightInUrl( $line );
+    }
+
+    if ( $swap_ltr_rtl_in_url ) {
+        $line = FixLtrAndRtlInUrl( $line );
+    }
+
+    $line = FixLeftAndRight( $line );
+    $line = FixCursorProperties( $line );
+
+    $line = FixBorderRadius( $line );
+    # Since FourPartNotation conflicts with BorderRadius, we tokenize border-radius properties here.
+    my $border_radius_tokenizer = CSS::Director::Tokenizer->new( $BORDER_RADIUS_TOKENIZER_RE, 'BORDER_RADIUS' );
+    $line = $border_radius_tokenizer->tokenize( $line );
+    $line = FixFourPartNotation( $line );
+    $line = $border_radius_tokenizer->detokenize( $line );
+
+    $line = FixBackgroundPosition( $line );
+
+    #$line = $gradient_tokenizer->detokenize( $line );
+
+    # DeTokenize the single line noflips.
+    $line = $noflip_single_tokenizer->detokenize( $line );
+
+    # DeTokenize the class-level noflips.
+    $line = $noflip_class_tokenizer->detokenize( $line );
+
+    # DeTokenize the comments.
+    $line = $comment_tokenizer->detokenize( $line );
+
+    # Rejoin the lines back together.
+    my @lines = split( $TOKEN_LINES, $line );
+
+    return ref( $lines ) ? \@lines : $lines[0];
+}
+
+1;
+
+package CSS::Director::Tokenizer;
+
+use strict;
+use warnings;
+
+sub new {
+    my ( $class, $re, $string ) = @_;
+    my $self = bless( {
+        're'        => $re,
+        'string'    => $string,
+        'originals' => [],
+    }, $class );
+
+    return $self;
+}
+
+sub tokenize {
+    my ( $self, $line ) = @_;
+
+    $line =~ s!$self->{re}!
+        $CSS::Director::TOKEN_DELIMITER .
+        $self->{string} . '_' .
+        push( @{ $self->{originals} }, $1 ) .
+        $CSS::Director::TOKEN_DELIMITER
+    !egx;
+
+    return $line;
+}
+
+sub detokenize {
+    my ( $self, $line ) = @_;
+
+    $line =~ s!$CSS::Director::TOKEN_DELIMITER$self->{string}_([0-9]+)$CSS::Director::TOKEN_DELIMITER!
+        $1 < @{ $self->{originals} } ? $self->{originals}[$1] : ''
+    !eg;
+
+=tmp
+    for my $i ( 0 .. $#{ $self->{originals} } ) {
+        my $token =
+            $CSS::Director::TOKEN_DELIMITER .
+            $self->{string} . '_' .
+            ( $i + 1 ) .
+            $CSS::Director::TOKEN_DELIMITER
+        ;
+        $line =~ s!$token!$originals->[$i]!g;
+    }
+=cut
 
     return $line;
 }

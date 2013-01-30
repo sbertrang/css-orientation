@@ -328,7 +328,7 @@ our $GRADIENT_RE = qr/ (
 	$CSS::Director::IDENT
 	[\.-] gradient
 	$CSS::Director::WHITESPACE
-	\( ( (?>[^()]+) | \([^()]*\) )+ \)
+	\( (?: (?>[^()]+) | \([^()]*\) )+ \)
 ) /ix;
 
 sub FixBodyDirectionLtrAndRtl {

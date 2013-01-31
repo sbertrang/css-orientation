@@ -368,14 +368,14 @@ sub FixCursorProperties {
 }
 
 sub FixBackgroundPosition {
-    my $line = shift;
+    my ( $line, $ignore_bad_bgp ) = @_;
 
     # leave full match undef where not needed
     $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition(undef,$1,$2,$3,$4,$5,$6)!egms;
     $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX(undef,$1,$2)!egms;
 
-    $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!CalculateNewBackgroundLengthPosition($1,$2,$3,$4,$5,$6,$7)!egms;
-    $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!CalculateNewBackgroundLengthPositionX($1,$2,$3)!egms;
+    $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!CalculateNewBackgroundLengthPosition($1,$2,$3,$4,$5,$6,$7,$ignore_bad_bgp)!egms;
+    $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!CalculateNewBackgroundLengthPositionX($1,$2,$3,$ignore_bad_bgp)!egms;
 
     return $line;
 }
@@ -432,11 +432,12 @@ sub CalculateNewBackgroundPositionX {
 }
 
 sub CalculateNewBackgroundLengthPosition {
+    my $ignore_bad_bgp = @_ > 7 ? pop( @_ ) : 0;
     my @m = @_;
 
     unless ( $m[4] =~ $ZERO_LENGTH ) {
         warn( "Unmirrorable horizontal value $m[4]: $m[0]" );
-        return $m[0];
+        return $ignore_bad_bgp ? $m[0] : undef;
     }
 
     my $position_string = defined( $m[1] ) ? $m[1] : '';
@@ -446,11 +447,12 @@ sub CalculateNewBackgroundLengthPosition {
 }
 
 sub CalculateNewBackgroundLengthPositionX {
+    my $ignore_bad_bgp = @_ > 3 ? pop( @_ ) : 0;
     my @m = @_;
 
     unless ( $m[2] =~ $ZERO_LENGTH ) {
         warn( "Unmirrorable horizontal value $m[2]: $m[0]" );
-        return $m[0];
+        return $ignore_bad_bgp ? $m[0] : undef;
     }
 
     return sprintf( 'background-position-x%s100%%', $m[1] );
@@ -475,7 +477,7 @@ sub FixFourPartNotation {
 }
 
 sub ChangeLeftToRightToLeft {
-    my ( $lines, $swap_ltr_rtl_in_url, $swap_left_right_in_url ) = @_;
+    my ( $lines, $swap_ltr_rtl_in_url, $swap_left_right_in_url, $ignore_bad_bgp ) = @_;
 
     my $line = join( $TOKEN_LINES, ref( $lines ) ? @$lines : $lines );
 
@@ -516,7 +518,11 @@ sub ChangeLeftToRightToLeft {
     $line = FixFourPartNotation( $line );
     $line = $border_radius_tokenizer->detokenize( $line );
 
-    $line = FixBackgroundPosition( $line );
+    $line = FixBackgroundPosition( $line, $ignore_bad_bgp );
+
+    unless ( defined( $line ) ) {
+        return undef;
+    }
 
     $line = $gradient_tokenizer->detokenize( $line );
 

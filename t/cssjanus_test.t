@@ -8,13 +8,13 @@ use Test::More
     tests => 102
 ;
 
-diag( "testBGPosition" );
+# testBGPosition
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar.png) top left" ), "background: url(/foo/bar.png) top right" );
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar.png) top right" ), "background: url(/foo/bar.png) top left" );
 is( ChangeLeftToRightToLeft( "background-position: top left" ), "background-position: top right" );
 is( ChangeLeftToRightToLeft( "background-position: top right" ), "background-position: top left" );
 
-diag( "testBGPositionPercentage" );
+# testBGPositionPercentage
 is( ChangeLeftToRightToLeft( "background-position: 100% 40%" ), "background-position: 0% 40%" );
 is( ChangeLeftToRightToLeft( "background-position: 0% 40%" ), "background-position: 100% 40%" );
 is( ChangeLeftToRightToLeft( "background-position: 23% 0" ), "background-position: 77% 0" );
@@ -25,21 +25,21 @@ is( ChangeLeftToRightToLeft( "background:url(../foo-bar_baz.2008.gif) no-repeat 
 is( ChangeLeftToRightToLeft( ".test { background: 10% 20% } .test2 { background: 40% 30% }" ), ".test { background: 90% 20% } .test2 { background: 60% 30% }" );
 is( ChangeLeftToRightToLeft( ".test { background: 0% 20% } .test2 { background: 40% 30% }" ), ".test { background: 100% 20% } .test2 { background: 60% 30% }" );
 
-diag( "testBorder" );
+# testBorder
 is( ChangeLeftToRightToLeft( "border-left: bar" ), "border-right: bar" );
 is( ChangeLeftToRightToLeft( "border-right: bar" ), "border-left: bar" );
 
-diag( "testBorderRadiusNotation" );
+# testBorderRadiusNotation
 is( ChangeLeftToRightToLeft( "border-radius: .25em 15px 0pt 0ex" ), "border-radius: 15px .25em 0ex 0pt" );
 is( ChangeLeftToRightToLeft( "border-radius: 10px 15px 0px" ), "border-radius: 15px 10px 15px 0px" );
 is( ChangeLeftToRightToLeft( "border-radius: 7px 8px" ), "border-radius: 8px 7px" );
 is( ChangeLeftToRightToLeft( "border-radius: 5px" ), "border-radius: 5px" );
 
-diag( "testCSSProperty" );
+# testCSSProperty
 is( ChangeLeftToRightToLeft( "alright: 10px" ), "alright: 10px" );
 is( ChangeLeftToRightToLeft( "alleft: 10px" ), "alleft: 10px" );
 
-diag( "testCursor" );
+# testCursor
 is( ChangeLeftToRightToLeft( "cursor: e-resize" ), "cursor: w-resize" );
 is( ChangeLeftToRightToLeft( "cursor: w-resize" ), "cursor: e-resize" );
 is( ChangeLeftToRightToLeft( "cursor: se-resize" ), "cursor: sw-resize" );
@@ -47,7 +47,7 @@ is( ChangeLeftToRightToLeft( "cursor: sw-resize" ), "cursor: se-resize" );
 is( ChangeLeftToRightToLeft( "cursor: ne-resize" ), "cursor: nw-resize" );
 is( ChangeLeftToRightToLeft( "cursor: nw-resize" ), "cursor: ne-resize" );
 
-diag( "testDirection" );
+# testDirection
 is( ChangeLeftToRightToLeft( "direction: ltr" ), "direction: ltr" );
 is( ChangeLeftToRightToLeft( "direction: rtl" ), "direction: rtl" );
 is( ChangeLeftToRightToLeft( "input { direction: ltr }" ), "input { direction: ltr }" );
@@ -56,7 +56,7 @@ is( ChangeLeftToRightToLeft( "body { padding: 10px; direction: ltr; }" ), "body 
 is( ChangeLeftToRightToLeft( "body { direction: ltr } .myClass { direction: ltr }" ), "body { direction: rtl } .myClass { direction: ltr }" );
 is( ChangeLeftToRightToLeft( "body{\n direction: ltr\n}" ), "body{\n direction: rtl\n}" );
 
-diag( "testDirectionalClassnames" );
+# testDirectionalClassnames
 is( ChangeLeftToRightToLeft( ".column-left { float: left }" ), ".column-left { float: right }" );
 is( ChangeLeftToRightToLeft( "#bright-light { float: left }" ), "#bright-light { float: right }" );
 is( ChangeLeftToRightToLeft( "a.left:hover { float: left }" ), "a.left:hover { float: right }" );
@@ -67,15 +67,15 @@ is( ChangeLeftToRightToLeft( "div.left > span.right+span.left { float: left }" )
 is( ChangeLeftToRightToLeft( ".thisclass .left .myclass {background:#fff;}" ), ".thisclass .left .myclass {background:#fff;}" );
 is( ChangeLeftToRightToLeft( ".thisclass .left .myclass #myid {background:#fff;}" ), ".thisclass .left .myclass #myid {background:#fff;}" );
 
-diag( "testDoubleDash" );
+# testDoubleDash
 is( ChangeLeftToRightToLeft( "border-left-color: red" ), "border-right-color: red" );
 is( ChangeLeftToRightToLeft( "border-right-color: red" ), "border-left-color: red" );
 
-diag( "testFloat" );
+# testFloat
 is( ChangeLeftToRightToLeft( "float: right" ), "float: left" );
 is( ChangeLeftToRightToLeft( "float: left" ), "float: right" );
 
-diag( "testFourNotation" );
+# testFourNotation
 is( ChangeLeftToRightToLeft( "padding: .25em 15px 0pt 0ex" ), "padding: .25em 0ex 0pt 15px" );
 is( ChangeLeftToRightToLeft( "margin: 1px -4px 3px 2px" ), "margin: 1px 2px 3px -4px" );
 is( ChangeLeftToRightToLeft( "padding:0 15px .25em 0" ), "padding:0 0 .25em 15px" );
@@ -84,18 +84,18 @@ is( ChangeLeftToRightToLeft( "padding: 1px 2px 3px auto" ), "padding: 1px auto 3
 is( ChangeLeftToRightToLeft( "padding: 1px inherit 3px auto" ), "padding: 1px auto 3px inherit" );
 is( ChangeLeftToRightToLeft( "#settings td p strong" ), "#settings td p strong" );
 
-diag( "testGradientNotation" );
+# testGradientNotation
 is( ChangeLeftToRightToLeft( "background-image: -moz-linear-gradient(#326cc1, #234e8c)" ), "background-image: -moz-linear-gradient(#326cc1, #234e8c)" );
 is( ChangeLeftToRightToLeft( "background-image: -webkit-gradient(linear, 100% 0%, 0% 0%, from(#666666), to(#ffffff))" ), "background-image: -webkit-gradient(linear, 100% 0%, 0% 0%, from(#666666), to(#ffffff))" );
 
-diag( "testLongLineWithMultipleDefs" );
+# testLongLineWithMultipleDefs
 is( ChangeLeftToRightToLeft( "body{direction:rtl;float:right}.b2{direction:ltr;float:right}" ), "body{direction:ltr;float:left}.b2{direction:ltr;float:left}" );
 
-diag( "testMargin" );
+# testMargin
 is( ChangeLeftToRightToLeft( "margin-left: bar" ), "margin-right: bar" );
 is( ChangeLeftToRightToLeft( "margin-right: bar" ), "margin-left: bar" );
 
-diag( "testNoFlip" );
+# testNoFlip
 is( ChangeLeftToRightToLeft( "/* \@noflip */ div { float: left; }" ), "/* \@noflip */ div { float: left; }" );
 is( ChangeLeftToRightToLeft( "/* \@noflip */ div, .notme { float: left; }" ), "/* \@noflip */ div, .notme { float: left; }" );
 is( ChangeLeftToRightToLeft( "/* \@noflip */ div { float: left; } div { float: left; }" ), "/* \@noflip */ div { float: left; } div { float: right; }" );
@@ -107,31 +107,31 @@ is( ChangeLeftToRightToLeft( "div\n{ /* \@noflip */\ntext-align: left;\nfloat: l
 is( ChangeLeftToRightToLeft( "/* \@noflip */div{float:left;text-align:left;}div{float:left}" ), "/* \@noflip */div{float:left;text-align:left;}div{float:right}" );
 is( ChangeLeftToRightToLeft( "/* \@noflip */div{float:left;text-align:left;}a{foo:left}" ), "/* \@noflip */div{float:left;text-align:left;}a{foo:right}" );
 
-diag( "testOneNotation" );
+# testOneNotation
 is( ChangeLeftToRightToLeft( "padding: 1px" ), "padding: 1px" );
 
-diag( "testPadding" );
+# testPadding
 is( ChangeLeftToRightToLeft( "padding-right: bar" ), "padding-left: bar" );
 is( ChangeLeftToRightToLeft( "padding-left: bar" ), "padding-right: bar" );
 
-diag( "testPositionAbsoluteOrRelativeValues" );
+# testPositionAbsoluteOrRelativeValues
 is( ChangeLeftToRightToLeft( "left: 10px" ), "right: 10px" );
 
-diag( "testPreserveComments" );
+# testPreserveComments
 is( ChangeLeftToRightToLeft( "/* left /* right */left: 10px" ), "/* left /* right */right: 10px" );
 is( ChangeLeftToRightToLeft( "/*left*//*left*/left: 10px" ), "/*left*//*left*/right: 10px" );
 is( ChangeLeftToRightToLeft( "/* Going right is cool */\n#test {left: 10px}" ), "/* Going right is cool */\n#test {right: 10px}" );
 is( ChangeLeftToRightToLeft( "/* padding-right 1 2 3 4 */\n#test {left: 10px}\n/*right*/" ), "/* padding-right 1 2 3 4 */\n#test {right: 10px}\n/*right*/" );
 is( ChangeLeftToRightToLeft( "/** Two line comment\n * left\n \*/\n#test {left: 10px}" ), "/** Two line comment\n * left\n \*/\n#test {right: 10px}" );
 
-diag( "testThreeNotation" );
+# testThreeNotation
 is( ChangeLeftToRightToLeft( "margin: 1em 0 .25em" ), "margin: 1em 0 .25em" );
 is( ChangeLeftToRightToLeft( "margin:-1.5em 0 -.75em" ), "margin:-1.5em 0 -.75em" );
 
-diag( "testTwoNotation" );
+# testTwoNotation
 is( ChangeLeftToRightToLeft( "padding: 1px 2px" ), "padding: 1px 2px" );
 
-diag( "testUrlWithFlagOff" );
+# testUrlWithFlagOff
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar-left.png)" ), "background: url(/foo/bar-left.png)" );
 is( ChangeLeftToRightToLeft( "background: url(/foo/left-bar.png)" ), "background: url(/foo/left-bar.png)" );
 is( ChangeLeftToRightToLeft( "url(\"http://www.blogger.com/img/triangle_ltr.gif\")" ), "url(\"http://www.blogger.com/img/triangle_ltr.gif\")" );
@@ -143,7 +143,7 @@ is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl.png); left: 10px" ), 
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar-right.png); direction: ltr" ), "background: url(/foo/bar-right.png); direction: ltr" );
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar-rtl_right.png);left:10px; direction: ltr" ), "background: url(/foo/bar-rtl_right.png);right:10px; direction: ltr" );
 
-diag( "testUrlWithFlagOn" );
+# testUrlWithFlagOn
 is( ChangeLeftToRightToLeft( "background: url(/foo/bar-left.png)", 1, 1 ), "background: url(/foo/bar-right.png)" );
 is( ChangeLeftToRightToLeft( "background: url(/foo/left-bar.png)", 1, 1 ), "background: url(/foo/right-bar.png)" );
 is( ChangeLeftToRightToLeft( "url(\"http://www.blogger.com/img/triangle_ltr.gif\")", 1, 1 ), "url(\"http://www.blogger.com/img/triangle_rtl.gif\")" );

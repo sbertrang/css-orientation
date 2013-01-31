@@ -374,8 +374,17 @@ sub FixBackgroundPosition {
     $line =~ s!$BG_HORIZONTAL_PERCENTAGE_RE!CalculateNewBackgroundPosition(undef,$1,$2,$3,$4,$5,$6)!egms;
     $line =~ s!$BG_HORIZONTAL_PERCENTAGE_X_RE!CalculateNewBackgroundPositionX(undef,$1,$2)!egms;
 
-    $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!CalculateNewBackgroundLengthPosition($1,$2,$3,$4,$5,$6,$7,$ignore_bad_bgp)!egms;
-    $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!CalculateNewBackgroundLengthPositionX($1,$2,$3,$ignore_bad_bgp)!egms;
+    $line =~ s!($BG_HORIZONTAL_LENGTH_RE)!
+        defined( $_ = CalculateNewBackgroundLengthPosition( $1, $2, $3, $4, $5, $6, $7, $ignore_bad_bgp ) )
+        ? $_
+        : return undef
+    !egmsx;
+
+    $line =~ s!($BG_HORIZONTAL_LENGTH_X_RE)!
+        defined( $_ = CalculateNewBackgroundLengthPositionX( $1, $2, $3, $ignore_bad_bgp ) )
+        ? $_
+        : return undef
+    !egmsx;
 
     return $line;
 }

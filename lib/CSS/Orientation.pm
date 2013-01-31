@@ -586,7 +586,7 @@ sub detokenize {
         ([0-9]+)
         $CSS::Orientation::TOKEN_DELIMITER
     !
-        $1 <= @{ $self->{originals} } ? $self->{originals}[$1-1] : ''
+        $1 > 0 && $1 <= @{ $self->{originals} } ? $self->{originals}[$1-1] : ''
     !egx;
 
     return $line;

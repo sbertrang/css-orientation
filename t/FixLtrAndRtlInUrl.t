@@ -6,11 +6,11 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Orientation qw( FixLtrAndRtlInUrl );
+use CSS::Orientation;
 
 my $input = 'background:url(rtl.png)';
 my $output = 'background:url(ltr.png)';
-my $result = FixLtrAndRtlInUrl( $input );
+my $result = CSS::Orientation::FixLtrAndRtlInUrl( $input );
 
 is( $output, $result );
 

@@ -6,11 +6,11 @@ use Test::More
     tests => 1
 ;
 
-use CSS::Orientation qw( FixLeftAndRightInUrl );
+use CSS::Orientation;
 
 my $input = 'background:url(right.png)';
 my $output = 'background:url(left.png)';
-my $result = FixLeftAndRightInUrl( $input );
+my $result = CSS::Orientation::FixLeftAndRightInUrl( $input );
 
 is( $output, $result );
 

@@ -3,9 +3,7 @@ package CSS::Orientation;
 use strict;
 use warnings;
 
-require Exporter;
-
-our @ISA = qw(Exporter);
+use base qw( Exporter );
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
     ChangeLeftToRightToLeft
@@ -594,19 +592,22 @@ __END__
 
 =head1 NAME
 
-CSS::Orientation - Perl extension to change orientation in CSS
+CSS::Orientation - Perl extension to change text orientation in CSS
 
 =head1 SYNOPSIS
 
   use CSS::Orientation qw( ChangeLeftToRightToLeft );
   ...
   $rtlcss = ChangeLeftToRightToLeft( $css );
-  # or without importing anything
+  ...
+  # or without imports
   $rtlcss = CSS::Orientation->change( $css );
 
 =head1 DESCRIPTION
 
-This module is a port of google's cssjanus to Perl.
+This module flips CSS from LTR to an RTL orienation and vice-versa.
+It is a port of cssjanus to Perl to have the same functionality available
+to other systems as well.
 
 =head2 EXPORT
 

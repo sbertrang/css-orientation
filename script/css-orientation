@@ -37,7 +37,8 @@ unless ( GetOptions( %options ) ) {
 my $result = ChangeLeftToRightToLeft(
     [ <STDIN> ],
     $SWAP_LTR_RTL_IN_URL,
-    $SWAP_LEFT_RIGHT_IN_URL
+    $SWAP_LEFT_RIGHT_IN_URL,
+    $IGNORE_BAD_BGP
 );
 
 print( STDOUT @$result );

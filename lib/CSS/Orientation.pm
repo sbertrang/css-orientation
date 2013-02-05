@@ -285,11 +285,11 @@ our $RTL_IN_URL_RE = risprintf( '%s(%s)%s', $LOOKBEHIND_NOT_LETTER,
 
 our $COMMENT_RE = risprintf( '(%s)', $COMMENT );
 
-our $NOFLIP_TOKEN = q'\@noflip';
+our $NOFLIP_TOKEN = q'@noflip';
 # The NOFLIP_TOKEN inside of a comment. For now, this requires that comments
 # be in the input, which means users of a css compiler would have to run
 # this script first if they want this functionality.
-our $NOFLIP_ANNOTATION = resprintf( q'/\*%s%s%s\*/', $WHITESPACE,
+our $NOFLIP_ANNOTATION = resprintf( q'/\*!?%s%s%s\*/', $WHITESPACE,
                                        $NOFLIP_TOKEN,
                                        $WHITESPACE );
 

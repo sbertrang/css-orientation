@@ -3,7 +3,7 @@ package CSS::Orientation;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.01';
 
 use base qw( Exporter );
 

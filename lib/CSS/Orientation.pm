@@ -3,6 +3,8 @@ package CSS::Orientation;
 use strict;
 use warnings;
 
+our $VERSION = '0.04';
+
 use base qw( Exporter );
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -10,8 +12,6 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our $VERSION = '0.03';
 
 # h                       [0-9a-f]      ; a hexadecimal digit
 our $HEX = q'[0-9a-f]';

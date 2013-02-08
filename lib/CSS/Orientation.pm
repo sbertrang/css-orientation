@@ -622,7 +622,7 @@ CSS::Orientation - Perl extension to change text orientation in CSS
 
 This module flips CSS from LTR to an RTL orienation and vice-versa.
 It is a port of cssjanus to Perl to have the same functionality available
-to other systems as well.
+without having to start another application.
 
 =head2 EXPORT
 

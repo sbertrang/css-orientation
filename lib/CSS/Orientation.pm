@@ -636,8 +636,6 @@ To use it without import or after require:
 
 =head3 change( \@lines | $line [ swap_ltr_rtl_in_url swap_left_right_in_url ] )
 
-=back
-
 =head1 SEE ALSO
 
 L<http://code.google.com/p/cssjanus/>
